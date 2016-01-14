@@ -1,8 +1,15 @@
 require "socket"
-
-webserver = TCPServer.new("localhost", 2000)
+ 
+webserver = TCPServer.new('localhost', 2000)
+base_dir = Dir.new(".")
 while (session = webserver.accept)
-    session.write(Time.now)
-    session.print("Hello World")
-    session.close
-end    
+  session.print "HTTP/1.1 200/OK\r\nContent-type:text/html\r\n\r\n"
+  base_dir.entries.each do |f|
+    if File.directory? f
+      session.print("#{f}/ ")
+    else
+      session.print("#{f}")
+    end
+  end
+  session.close
+end
